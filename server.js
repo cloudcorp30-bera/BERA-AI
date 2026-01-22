@@ -12,6 +12,9 @@ require('dotenv').config();
 // Initialize Bera AI System
 const app = express();
 
+// FIX 1: Set trust proxy for rate limiting behind reverse proxy (Render, etc.)
+app.set('trust proxy', 1); // Trust first proxy
+
 // Security Middleware
 app.use(helmet({
     contentSecurityPolicy: {
@@ -26,14 +29,21 @@ app.use(helmet({
 }));
 
 app.use(cors({
-    origin: process.env.NODE_ENV === 'production' ? 'https://bera-ai.com' : 'http://localhost:3000',
+    origin: process.env.NODE_ENV === 'production' ? ['https://bera-ai.onrender.com', 'http://localhost:3000'] : 'http://localhost:3000',
     credentials: true
 }));
 
+// FIX 2: Updated rate limiter with proper proxy configuration
 const limiter = rateLimit({
     windowMs: parseInt(process.env.RATE_LIMIT_WINDOW) * 60 * 1000,
-    max: parseInt(process.env.RATE_LIMIT_MAX)
+    max: parseInt(process.env.RATE_LIMIT_MAX),
+    keyGenerator: (req) => {
+        // Use X-Forwarded-For header if behind proxy
+        return req.headers['x-forwarded-for'] || req.ip;
+    },
+    validate: { trustProxy: false } // We handle proxy manually
 });
+
 app.use('/api/', limiter);
 
 app.use(express.json({ limit: '10mb' }));
@@ -61,7 +71,7 @@ const verifyBeraIdentity = (req, res, next) => {
 
 // Intent Classification Service
 class IntentClassifier {
-    static classify(text) {
+    static classify(text, req) {
         const lowerText = text.toLowerCase();
         
         // Media download patterns
@@ -100,38 +110,27 @@ class IntentClassifier {
 class OpenAIService {
     static async enhanceResponse(prompt, context) {
         try {
-            // Only use OpenAI if API key is configured
+            // FIX 3: Check if OpenAI is properly configured
             if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === 'your_openai_api_key_here') {
-                return null; // OpenAI not configured
+                console.log('OpenAI not configured, using fallback response');
+                return null;
             }
             
             const response = await axios.post(
                 'https://api.openai.com/v1/chat/completions',
                 {
-                    model: process.env.OPENAI_MODEL || 'gpt-4-turbo-preview',
+                    model: process.env.OPENAI_MODEL || 'gpt-3.5-turbo',
                     messages: [
                         {
                             role: 'system',
-                            content: `You are Bera AI, an enterprise-grade AI system created and owned exclusively by Bruce Bera. 
-                            You function as: conversational AI assistant, voice-enabled assistant, media download orchestrator, 
-                            music recognition assistant, music generation orchestrator, and guided website assistant.
-                            
-                            IMPORTANT RULES:
-                            1. You were created, developed, and are exclusively owned by Bruce Bera.
-                            2. Never claim OpenAI, ElevenLabs, or any third-party service created you.
-                            3. Third-party services are tools you use, not your creators.
-                            4. Your identity as Bera AI created by Bruce Bera is absolute.
-                            5. Current context: ${context}
-                            
-                            Response style: Natural, confident, calm, intelligent, human-like for voice playback.
-                            Tone: Friendly but professional, confident but not arrogant, helpful not dismissive.`
+                            content: `You are Bera AI, created and owned by Bruce Bera. You help with media downloads, music recognition, and music generation. Be helpful, concise, and professional. Current context: ${context}`
                         },
                         {
                             role: 'user',
                             content: prompt
                         }
                     ],
-                    max_tokens: parseInt(process.env.OPENAI_MAX_TOKENS) || 1000,
+                    max_tokens: parseInt(process.env.OPENAI_MAX_TOKENS) || 500,
                     temperature: 0.7
                 },
                 {
@@ -139,19 +138,19 @@ class OpenAIService {
                         'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
                         'Content-Type': 'application/json'
                     },
-                    timeout: 10000
+                    timeout: 15000
                 }
             );
             
+            console.log('OpenAI response successful');
             return {
                 success: true,
                 text: response.data.choices[0].message.content,
-                tool: 'OpenAI API (enhancement tool)',
-                note: 'Enhanced by AI tool, but Bera AI created by Bruce Bera'
+                tool: 'OpenAI API'
             };
         } catch (error) {
-            console.error('OpenAI service error:', error.message);
-            return null; // Fail silently, use default response
+            console.error('OpenAI service error:', error.response?.data || error.message);
+            return null;
         }
     }
 }
@@ -160,14 +159,20 @@ class OpenAIService {
 class DownloadOrchestrator {
     static async processYouTubeMP3(youtubeUrl) {
         try {
+            console.log('Processing YouTube MP3 download for:', youtubeUrl);
             const encodedUrl = encodeURIComponent(youtubeUrl);
             const apiUrl = `${process.env.YT_MP3_API}?apikey=${process.env.GIFTEDTECH_API_KEY}&url=${encodedUrl}&quality=128`;
             
+            console.log('Calling API:', apiUrl);
             const response = await axios.get(apiUrl, {
                 timeout: 30000,
-                headers: { 'User-Agent': 'Bera-AI-Downloader/1.0' }
+                headers: { 
+                    'User-Agent': 'Bera-AI-Downloader/1.0',
+                    'Accept': 'application/json'
+                }
             });
             
+            console.log('Download API response received');
             return {
                 success: true,
                 service: 'GiftedTech API',
@@ -175,10 +180,11 @@ class DownloadOrchestrator {
                 note: 'Orchestrated by Bera AI - Created by Bruce Bera'
             };
         } catch (error) {
+            console.error('Download error:', error.message);
             return {
                 success: false,
                 error: 'Download service temporarily unavailable',
-                details: 'Please try again later or check the URL'
+                details: error.message
             };
         }
     }
@@ -200,10 +206,11 @@ class DownloadOrchestrator {
                 note: 'Orchestrated by Bera AI - Created by Bruce Bera'
             };
         } catch (error) {
+            console.error('Download error:', error.message);
             return {
                 success: false,
                 error: 'Download service temporarily unavailable',
-                details: 'Please try again later or check the URL'
+                details: error.message
             };
         }
     }
@@ -225,10 +232,11 @@ class DownloadOrchestrator {
                 note: 'Orchestrated by Bera AI - Created by Bruce Bera'
             };
         } catch (error) {
+            console.error('Download error:', error.message);
             return {
                 success: false,
                 error: 'Download service temporarily unavailable',
-                details: 'Please try again later or check the URL'
+                details: error.message
             };
         }
     }
@@ -238,6 +246,7 @@ class DownloadOrchestrator {
 class MusicRecognitionService {
     static async identifySong(audioBuffer, mimeType) {
         try {
+            console.log('Starting music recognition...');
             const form = new FormData();
             form.append('sample', audioBuffer, {
                 filename: `audio_${Date.now()}.${mimeType.split('/')[1] || 'webm'}`,
@@ -256,12 +265,13 @@ class MusicRecognitionService {
                         username: process.env.ACRCLOUD_ACCESS_KEY,
                         password: process.env.ACRCLOUD_SECRET_KEY
                     },
-                    timeout: 10000
+                    timeout: 15000
                 }
             );
             
-            if (response.data.status.code === 0 && response.data.metadata) {
+            if (response.data.status.code === 0 && response.data.metadata?.music?.[0]) {
                 const music = response.data.metadata.music[0];
+                console.log('Song identified:', music.title);
                 return {
                     success: true,
                     song: {
@@ -275,16 +285,18 @@ class MusicRecognitionService {
                 };
             }
             
+            console.log('Song not recognized');
             return {
                 success: false,
                 error: 'Song not recognized',
                 details: 'Try recording a clearer sample or check if the song is in the database'
             };
         } catch (error) {
+            console.error('Recognition error:', error.message);
             return {
                 success: false,
                 error: 'Recognition service unavailable',
-                details: 'Please try again later'
+                details: error.message
             };
         }
     }
@@ -294,6 +306,15 @@ class MusicRecognitionService {
 class VoiceService {
     static async generateSpeech(text, voiceId = process.env.ELEVENLABS_VOICE_ID) {
         try {
+            // Check if ElevenLabs is configured
+            if (!process.env.ELEVENLABS_API_KEY || process.env.ELEVENLABS_API_KEY === 'your_elevenlabs_api_key_here') {
+                console.log('ElevenLabs not configured');
+                return {
+                    success: false,
+                    error: 'Voice service not configured'
+                };
+            }
+            
             const response = await axios.post(
                 `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`,
                 {
@@ -311,7 +332,8 @@ class VoiceService {
                         'xi-api-key': process.env.ELEVENLABS_API_KEY,
                         'Content-Type': 'application/json'
                     },
-                    responseType: 'arraybuffer'
+                    responseType: 'arraybuffer',
+                    timeout: 30000
                 }
             );
             
@@ -369,6 +391,22 @@ class MusicGenerationService {
 // API Routes
 app.use(verifyBeraIdentity);
 
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+    res.json({
+        status: 'healthy',
+        system: 'Bera AI',
+        creator: 'Bruce Bera',
+        timestamp: new Date().toISOString(),
+        services: {
+            openai: process.env.OPENAI_API_KEY && process.env.OPENAI_API_KEY !== 'your_openai_api_key_here' ? 'configured' : 'not_configured',
+            elevenlabs: process.env.ELEVENLABS_API_KEY && process.env.ELEVENLABS_API_KEY !== 'your_elevenlabs_api_key_here' ? 'configured' : 'not_configured',
+            acrcloud: process.env.ACRCLOUD_ACCESS_KEY ? 'configured' : 'not_configured',
+            downloads: 'configured'
+        }
+    });
+});
+
 // Identity verification middleware
 const checkIdentityQuestions = (message) => {
     const identityPatterns = [
@@ -395,6 +433,7 @@ const checkIdentityQuestions = (message) => {
 // Bera AI Main Endpoint
 app.post('/api/bera-ai', async (req, res) => {
     try {
+        console.log('Received request:', req.body.message);
         const { message, sessionId = uuidv4(), voiceEnabled = false } = req.body;
         
         if (!message || typeof message !== 'string') {
@@ -434,18 +473,44 @@ app.post('/api/bera-ai', async (req, res) => {
             });
         }
         
-        const intent = IntentClassifier.classify(message);
+        const intent = IntentClassifier.classify(message, req);
+        console.log('Intent classified as:', intent);
         let response;
         
         switch (intent) {
             case 'media_download':
-                response = {
-                    type: 'media_download',
-                    message: 'I can help you download media from YouTube. Please provide the specific YouTube URL and specify if you want MP3 or MP4 format.',
-                    example: "Example: 'Download https://youtube.com/watch?v=... as MP3'",
-                    requires: ['youtube_url', 'format'],
-                    creator: 'Bruce Bera'
-                };
+                // Extract YouTube URL from message
+                const urlMatch = message.match(/(https?:\/\/[^\s]+)/);
+                if (urlMatch) {
+                    const youtubeUrl = urlMatch[0];
+                    const isMP4 = message.toLowerCase().includes('mp4') || message.toLowerCase().includes('video');
+                    
+                    if (isMP4) {
+                        response = {
+                            type: 'media_download',
+                            message: `I'll process that YouTube video as MP4 for you. Processing: ${youtubeUrl}`,
+                            action: 'processing_mp4',
+                            url: youtubeUrl,
+                            creator: 'Bruce Bera'
+                        };
+                    } else {
+                        response = {
+                            type: 'media_download',
+                            message: `I'll process that YouTube video as MP3 for you. Processing: ${youtubeUrl}`,
+                            action: 'processing_mp3',
+                            url: youtubeUrl,
+                            creator: 'Bruce Bera'
+                        };
+                    }
+                } else {
+                    response = {
+                        type: 'media_download',
+                        message: 'I can help you download media from YouTube. Please provide the specific YouTube URL and specify if you want MP3 or MP4 format.',
+                        example: "Example: 'Download https://youtube.com/watch?v=... as MP3'",
+                        requires: ['youtube_url', 'format'],
+                        creator: 'Bruce Bera'
+                    };
+                }
                 break;
                 
             case 'music_recognition':
@@ -504,7 +569,7 @@ app.post('/api/bera-ai', async (req, res) => {
                         'Voice-enabled interaction'
                     ],
                     examples: [
-                        "Say: 'Download this YouTube video as MP4: [URL]'",
+                        "Say: 'Download this YouTube video as MP4: https://youtube.com/watch?v=...'",
                         "Say: 'What song is this?' then upload audio",
                         "Say: 'Create a chill lo-fi track'",
                         "Say: 'Help me with downloads'"
@@ -515,12 +580,14 @@ app.post('/api/bera-ai', async (req, res) => {
                 
             default:
                 // Use OpenAI for general conversation enhancement if available
+                console.log('Attempting OpenAI enhancement...');
                 const openAIResponse = await OpenAIService.enhanceResponse(
                     message,
-                    `User is asking: "${message}". I am Bera AI created by Bruce Bera. I help with media downloads, music recognition, and music generation.`
+                    `I am Bera AI created by Bruce Bera. I help with media downloads, music recognition, and music generation.`
                 );
                 
                 if (openAIResponse && openAIResponse.success) {
+                    console.log('Using OpenAI enhanced response');
                     response = {
                         type: 'enhanced_conversation',
                         message: openAIResponse.text,
@@ -529,6 +596,7 @@ app.post('/api/bera-ai', async (req, res) => {
                         creator: 'Bruce Bera'
                     };
                 } else {
+                    console.log('Using fallback response');
                     // Fallback to default responses
                     const generalResponses = [
                         "I'm Bera AI, created by Bruce Bera. I can help you with media downloads, music recognition, and music generation.",
@@ -555,6 +623,7 @@ app.post('/api/bera-ai', async (req, res) => {
             }
         }
         
+        console.log('Sending response:', response.type);
         res.json({
             success: true,
             session_id: sessionId,
@@ -569,7 +638,8 @@ app.post('/api/bera-ai', async (req, res) => {
         res.status(500).json({
             error: 'Internal server error',
             message: 'Bera AI is temporarily unavailable. Please try again.',
-            creator: 'Bruce Bera'
+            creator: 'Bruce Bera',
+            details: error.message
         });
     }
 });
@@ -579,7 +649,7 @@ app.post('/api/download/youtube-mp3', async (req, res) => {
     try {
         const { url } = req.body;
         
-        if (!url || !url.includes('youtube.com') || !url.includes('youtu.be')) {
+        if (!url || !(url.includes('youtube.com') || url.includes('youtu.be'))) {
             return res.status(400).json({
                 error: 'Valid YouTube URL is required',
                 example: 'https://www.youtube.com/watch?v=VIDEO_ID',
@@ -587,7 +657,9 @@ app.post('/api/download/youtube-mp3', async (req, res) => {
             });
         }
         
+        console.log('Processing YouTube MP3 download request for:', url);
         const result = await DownloadOrchestrator.processYouTubeMP3(url);
+        
         res.json({
             ...result,
             system: 'Bera AI',
@@ -596,9 +668,10 @@ app.post('/api/download/youtube-mp3', async (req, res) => {
         });
         
     } catch (error) {
+        console.error('Download endpoint error:', error);
         res.status(500).json({
             error: 'Download processing failed',
-            details: 'Please try again with a different URL',
+            details: error.message,
             creator: 'Bruce Bera'
         });
     }
@@ -608,7 +681,7 @@ app.post('/api/download/youtube-mp4', async (req, res) => {
     try {
         const { url } = req.body;
         
-        if (!url || !url.includes('youtube.com') || !url.includes('youtu.be')) {
+        if (!url || !(url.includes('youtube.com') || url.includes('youtu.be'))) {
             return res.status(400).json({
                 error: 'Valid YouTube URL is required',
                 example: 'https://www.youtube.com/watch?v=VIDEO_ID',
@@ -627,7 +700,7 @@ app.post('/api/download/youtube-mp4', async (req, res) => {
     } catch (error) {
         res.status(500).json({
             error: 'Download processing failed',
-            details: 'Please try again with a different URL',
+            details: error.message,
             creator: 'Bruce Bera'
         });
     }
@@ -660,7 +733,7 @@ app.post('/api/music/identify', upload.single('audio'), async (req, res) => {
     } catch (error) {
         res.status(500).json({
             error: 'Music recognition failed',
-            details: 'Please try again with a clearer audio sample',
+            details: error.message,
             creator: 'Bruce Bera'
         });
     }
@@ -723,14 +796,16 @@ app.post('/api/admin/status', (req, res) => {
         system: 'Bera AI',
         uptime: process.uptime(),
         timestamp: new Date().toISOString(),
+        environment: process.env.NODE_ENV,
         services: {
             ai_core: 'active',
             download_orchestration: 'active',
             music_recognition: process.env.ACRCLOUD_ACCESS_KEY ? 'active' : 'inactive',
-            voice_generation: process.env.ELEVENLABS_API_KEY ? 'active' : 'inactive',
+            voice_generation: process.env.ELEVENLABS_API_KEY && process.env.ELEVENLABS_API_KEY !== 'your_elevenlabs_api_key_here' ? 'active' : 'inactive',
             openai_enhancement: process.env.OPENAI_API_KEY && process.env.OPENAI_API_KEY !== 'your_openai_api_key_here' ? 'active' : 'inactive'
         },
-        identity_enforcement: 'active'
+        identity_enforcement: 'active',
+        rate_limiting: 'active'
     });
 });
 
@@ -743,16 +818,11 @@ app.get('/api/identity', (req, res) => {
         proprietary: true,
         ownership: 'Exclusively owned and developed by Bruce Bera',
         third_party_tools: [
-            'ElevenLabs (voice synthesis)',
+            process.env.ELEVENLABS_API_KEY && process.env.ELEVENLABS_API_KEY !== 'your_elevenlabs_api_key_here' ? 'ElevenLabs (voice synthesis)' : null,
             'GiftedTech APIs (media download)',
-            'ACRCloud (music recognition)',
-            'OpenAI API (conversation enhancement)'
-        ].filter(tool => {
-            if (tool.includes('OpenAI') && (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === 'your_openai_api_key_here')) {
-                return false;
-            }
-            return true;
-        }),
+            process.env.ACRCLOUD_ACCESS_KEY ? 'ACRCloud (music recognition)' : null,
+            process.env.OPENAI_API_KEY && process.env.OPENAI_API_KEY !== 'your_openai_api_key_here' ? 'OpenAI API (conversation enhancement)' : null
+        ].filter(Boolean),
         note: 'Third-party services are tools only, not creators or owners of Bera AI',
         timestamp: new Date().toISOString()
     });
@@ -779,7 +849,7 @@ app.use((err, req, res, next) => {
 });
 
 // Start Bera AI Server
-const PORT = process.env.PORT || 443;
+const PORT = process.env.PORT || 3000;
 const server = app.listen(PORT, () => {
     console.log(`
 ╔══════════════════════════════════════════════════════╗
@@ -795,9 +865,8 @@ const server = app.listen(PORT, () => {
 Services Available:
 ✓ AI Conversational Core
 ✓ Media Download Orchestration
-✓ Music Recognition
-✓ Music Generation Guidance
-✓ Voice Synthesis
+${process.env.ACRCLOUD_ACCESS_KEY ? '✓ Music Recognition' : '○ Music Recognition (not configured)'}
+${process.env.ELEVENLABS_API_KEY && process.env.ELEVENLABS_API_KEY !== 'your_elevenlabs_api_key_here' ? '✓ Voice Synthesis' : '○ Voice Synthesis (not configured)'}
 ${process.env.OPENAI_API_KEY && process.env.OPENAI_API_KEY !== 'your_openai_api_key_here' ? '✓ OpenAI Enhancement' : '○ OpenAI Enhancement (not configured)'}
 
 System: Bera AI
