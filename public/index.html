@@ -4,210 +4,218 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bera AI - Created by Bruce Bera</title>
-    <meta name="description" content="Enterprise-grade AI system created and owned by Bruce Bera">
-    <meta name="author" content="Bruce Bera">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>">
     <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary: #7209b7;
+            --success: #2ec4b6;
+            --danger: #e71d36;
+            --dark: #0d1b2a;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --border: #dee2e6;
+        }
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
         }
-
+        
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            color: #e2e8f0;
+            background: linear-gradient(135deg, #0d1b2a 0%, #1b263b 100%);
+            color: var(--light);
             min-height: 100vh;
             line-height: 1.6;
         }
-
+        
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+            min-height: 100vh;
         }
-
-        header {
+        
+        @media (max-width: 992px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Header */
+        .header {
+            grid-column: 1 / -1;
             text-align: center;
-            padding: 40px 20px;
-            border-bottom: 1px solid #334155;
-            margin-bottom: 40px;
+            padding: 30px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 30px;
         }
-
+        
         .logo {
-            font-size: 3.5rem;
+            font-size: 48px;
             margin-bottom: 15px;
         }
-
-        h1 {
-            font-size: 2.5rem;
-            background: linear-gradient(90deg, #60a5fa, #8b5cf6);
+        
+        .header h1 {
+            font-size: 36px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
             margin-bottom: 10px;
         }
-
+        
         .creator {
-            color: #94a3b8;
-            font-size: 1.1rem;
-            margin-bottom: 20px;
+            color: var(--success);
+            font-size: 18px;
+            font-weight: 500;
         }
-
-        .tagline {
-            font-size: 1.2rem;
-            color: #cbd5e1;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .main-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
-            margin-bottom: 60px;
-        }
-
-        @media (max-width: 768px) {
-            .main-content {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .chat-section, .features-section {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-        }
-
+        
+        /* Chat Section */
         .chat-section {
             display: flex;
             flex-direction: column;
-        }
-
-        .chat-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 25px;
-        }
-
-        .chat-header h2 {
-            font-size: 1.8rem;
-            color: #60a5fa;
-        }
-
-        .status-indicator {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 16px;
-            background: rgba(34, 197, 94, 0.2);
-            border: 1px solid rgba(34, 197, 94, 0.3);
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
             border-radius: 20px;
-            font-size: 0.9rem;
+            border: 1px solid rgba(255,255,255,0.1);
+            overflow: hidden;
         }
-
+        
+        .chat-header {
+            padding: 20px;
+            background: rgba(0,0,0,0.2);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .chat-header h2 {
+            color: var(--primary);
+            font-size: 24px;
+        }
+        
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(46, 196, 182, 0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+        
         .status-dot {
-            width: 10px;
-            height: 10px;
-            background: #22c55e;
+            width: 8px;
+            height: 8px;
+            background: var(--success);
             border-radius: 50%;
             animation: pulse 2s infinite;
         }
-
+        
         @keyframes pulse {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
         }
-
+        
         .chat-messages {
             flex: 1;
-            min-height: 400px;
-            max-height: 500px;
-            overflow-y: auto;
             padding: 20px;
-            background: rgba(15, 23, 42, 0.5);
-            border-radius: 15px;
-            margin-bottom: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            overflow-y: auto;
+            min-height: 500px;
+            max-height: 600px;
         }
-
+        
         .message {
             margin-bottom: 20px;
-            padding: 15px;
-            border-radius: 15px;
-            max-width: 85%;
+            opacity: 0;
+            animation: fadeIn 0.3s ease forwards;
         }
-
+        
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+        
         .user-message {
-            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-            margin-left: auto;
+            text-align: right;
+        }
+        
+        .ai-message {
+            text-align: left;
+        }
+        
+        .message-content {
+            display: inline-block;
+            padding: 12px 18px;
+            border-radius: 18px;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+        
+        .user-message .message-content {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
             border-bottom-right-radius: 5px;
         }
-
-        .ai-message {
-            background: rgba(71, 85, 105, 0.5);
-            margin-right: auto;
+        
+        .ai-message .message-content {
+            background: rgba(255,255,255,0.1);
+            color: var(--light);
             border-bottom-left-radius: 5px;
+            border: 1px solid rgba(255,255,255,0.2);
         }
-
-        .message-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 8px;
+        
+        .message-tool {
+            display: inline-block;
+            font-size: 12px;
+            background: var(--secondary);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-left: 10px;
+            vertical-align: middle;
         }
-
-        .message-header span {
-            font-weight: 600;
-            color: #e2e8f0;
-        }
-
-        .timestamp {
-            font-size: 0.8rem;
-            color: #94a3b8;
-        }
-
-        .voice-indicator {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 0.9rem;
-            color: #8b5cf6;
-        }
-
+        
         .input-area {
+            padding: 20px;
+            background: rgba(0,0,0,0.2);
+            border-top: 1px solid rgba(255,255,255,0.1);
             display: flex;
             gap: 15px;
         }
-
+        
         #messageInput {
             flex: 1;
             padding: 15px 20px;
-            background: rgba(15, 23, 42, 0.7);
-            border: 1px solid #334155;
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.2);
             border-radius: 15px;
-            color: #e2e8f0;
-            font-size: 1rem;
+            color: white;
+            font-size: 16px;
+            outline: none;
             transition: all 0.3s;
         }
-
+        
         #messageInput:focus {
-            outline: none;
-            border-color: #60a5fa;
-            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
+            border-color: var(--primary);
+            background: rgba(255,255,255,0.15);
         }
-
+        
+        #messageInput::placeholder {
+            color: rgba(255,255,255,0.5);
+        }
+        
         .buttons {
             display: flex;
             gap: 10px;
         }
-
+        
         button {
             padding: 15px 25px;
             border: none;
@@ -215,663 +223,680 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
-            font-size: 1rem;
+            font-size: 16px;
             display: flex;
             align-items: center;
             gap: 8px;
         }
-
-        .send-btn {
-            background: linear-gradient(135deg, #60a5fa, #3b82f6);
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             color: white;
         }
-
-        .send-btn:hover {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
+        
+        .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+            box-shadow: 0 10px 20px rgba(67, 97, 238, 0.3);
         }
-
-        .voice-btn {
-            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
             color: white;
+            border: 1px solid rgba(255,255,255,0.2);
         }
-
-        .voice-btn:hover {
-            background: linear-gradient(135deg, #7c3aed, #6d28d9);
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3);
+        
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.2);
         }
-
+        
         button:disabled {
             opacity: 0.5;
             cursor: not-allowed;
             transform: none !important;
         }
-
-        .features-section h2 {
-            font-size: 1.8rem;
-            color: #8b5cf6;
-            margin-bottom: 25px;
+        
+        /* Features Section */
+        .features-section {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 30px;
+            height: fit-content;
         }
-
+        
+        .features-section h2 {
+            color: var(--primary);
+            margin-bottom: 25px;
+            font-size: 24px;
+            text-align: center;
+        }
+        
         .features-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
             gap: 20px;
+            margin-bottom: 30px;
         }
-
-        @media (max-width: 480px) {
-            .features-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
+        
         .feature-card {
-            background: rgba(15, 23, 42, 0.5);
-            padding: 20px;
+            background: rgba(255,255,255,0.05);
             border-radius: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
             transition: all 0.3s;
         }
-
+        
         .feature-card:hover {
             transform: translateY(-5px);
-            border-color: rgba(96, 165, 250, 0.3);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            border-color: var(--primary);
+            background: rgba(67, 97, 238, 0.1);
         }
-
+        
         .feature-icon {
-            font-size: 2rem;
+            font-size: 32px;
             margin-bottom: 15px;
+            color: var(--primary);
         }
-
+        
         .feature-card h3 {
-            color: #60a5fa;
+            color: white;
             margin-bottom: 10px;
-            font-size: 1.2rem;
+            font-size: 18px;
         }
-
+        
         .feature-card p {
-            color: #cbd5e1;
-            font-size: 0.95rem;
+            color: rgba(255,255,255,0.7);
+            font-size: 14px;
+            line-height: 1.5;
         }
-
-        .capabilities {
+        
+        .examples {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .examples h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        .example-buttons {
             display: flex;
-            flex-wrap: wrap;
+            flex-direction: column;
             gap: 10px;
-            margin-top: 15px;
         }
-
-        .capability {
-            padding: 6px 12px;
-            background: rgba(96, 165, 250, 0.2);
-            border: 1px solid rgba(96, 165, 250, 0.3);
-            border-radius: 20px;
-            font-size: 0.85rem;
-            color: #93c5fd;
+        
+        .example-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.8);
+            padding: 12px 20px;
+            border-radius: 12px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
         }
-
-        footer {
+        
+        .example-btn:hover {
+            background: rgba(67, 97, 238, 0.2);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        /* Audio Player */
+        .audio-player {
+            margin-top: 10px;
+            width: 100%;
+        }
+        
+        .audio-player audio {
+            width: 100%;
+            border-radius: 10px;
+        }
+        
+        /* Loading */
+        .loading {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: rgba(255,255,255,0.5);
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            margin: 10px 0;
+        }
+        
+        .loading::after {
+            content: '';
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.2);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Footer */
+        .footer {
+            grid-column: 1 / -1;
             text-align: center;
-            padding: 30px 20px;
-            border-top: 1px solid #334155;
-            margin-top: 40px;
+            padding: 30px 0;
+            margin-top: 30px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.5);
+            font-size: 14px;
         }
-
-        .footer-creator {
-            color: #94a3b8;
-            font-size: 1rem;
-            margin-bottom: 10px;
+        
+        .footer strong {
+            color: var(--success);
         }
-
-        .footer-legal {
-            color: #64748b;
-            font-size: 0.9rem;
-            max-width: 600px;
-            margin: 0 auto;
+        
+        /* Voice Recording */
+        .voice-recording {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(231, 29, 54, 0.1);
+            border-radius: 10px;
+            border: 1px solid rgba(231, 29, 54, 0.3);
         }
-
+        
         .voice-animation {
             display: flex;
             gap: 3px;
             height: 20px;
             align-items: flex-end;
         }
-
-        .bar {
+        
+        .voice-bar {
             width: 3px;
-            background: #8b5cf6;
+            background: var(--danger);
+            border-radius: 2px;
             animation: bounce 1.2s infinite ease-in-out;
         }
-
-        .bar:nth-child(1) { animation-delay: -0.4s; }
-        .bar:nth-child(2) { animation-delay: -0.2s; }
-        .bar:nth-child(3) { animation-delay: 0s; }
-        .bar:nth-child(4) { animation-delay: -0.2s; }
-        .bar:nth-child(5) { animation-delay: -0.4s; }
-
+        
+        .voice-bar:nth-child(1) { animation-delay: -0.4s; }
+        .voice-bar:nth-child(2) { animation-delay: -0.2s; }
+        .voice-bar:nth-child(3) { animation-delay: 0s; }
+        .voice-bar:nth-child(4) { animation-delay: -0.2s; }
+        .voice-bar:nth-child(5) { animation-delay: -0.4s; }
+        
         @keyframes bounce {
             0%, 100% { height: 5px; }
             50% { height: 20px; }
         }
-
-        .audio-player {
+        
+        /* Download Info */
+        .download-info {
             margin-top: 10px;
-            width: 100%;
-        }
-
-        .audio-player audio {
-            width: 100%;
-            border-radius: 10px;
-        }
-
-        .voice-controls {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .loading {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: #94a3b8;
-        }
-
-        .loading::after {
-            content: '';
-            width: 20px;
-            height: 20px;
-            border: 2px solid #334155;
-            border-top-color: #60a5fa;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .error {
-            background: rgba(239, 68, 68, 0.2);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            color: #fca5a5;
             padding: 10px;
+            background: rgba(46, 196, 182, 0.1);
             border-radius: 10px;
-            margin-top: 10px;
+            border: 1px solid rgba(46, 196, 182, 0.3);
+            font-size: 13px;
         }
-
-        .openai-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 4px 10px;
-            background: rgba(16, 163, 127, 0.2);
-            border: 1px solid rgba(16, 163, 127, 0.3);
-            border-radius: 12px;
-            font-size: 0.8rem;
-            color: #5eead4;
-            margin-left: 10px;
-        }
-
-        .enhanced-response {
-            border-left: 3px solid #10a37f;
-            padding-left: 10px;
-            margin-top: 5px;
+        
+        .download-info code {
+            background: rgba(0,0,0,0.3);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <header>
+        <div class="header">
             <div class="logo">🤖</div>
             <h1>Bera AI</h1>
             <div class="creator">Created and Owned by Bruce Bera</div>
-            <p class="tagline">Enterprise-grade AI system for media, music, and intelligent assistance</p>
-            <div style="margin-top: 15px; font-size: 0.9rem; color: #94a3b8;">
-                <span class="openai-badge">🤖 Enhanced with AI Tools</span>
-                <span style="margin: 0 10px;">•</span>
-                <span>🎤 Natural Voice</span>
-                <span style="margin: 0 10px;">•</span>
-                <span>🎵 Music Intelligence</span>
-            </div>
-        </header>
-
-        <div class="main-content">
-            <section class="chat-section">
-                <div class="chat-header">
-                    <h2>Chat with Bera AI</h2>
-                    <div class="status-indicator">
-                        <span class="status-dot"></span>
-                        <span>System Online</span>
-                    </div>
-                </div>
-
-                <div class="chat-messages" id="chatMessages">
-                    <div class="message ai-message">
-                        <div class="message-header">
-                            <span>Bera AI</span>
-                            <div class="voice-indicator">🔊 Voice Ready</div>
-                        </div>
-                        <p>Hello! I'm Bera AI, created by Bruce Bera. How can I assist you today? I can help with media downloads, music recognition, and music generation.</p>
-                        <div class="enhanced-response">
-                            <small class="openai-badge">AI Enhanced</small>
-                        </div>
-                        <div class="timestamp">Just now</div>
-                    </div>
-                </div>
-
-                <div class="input-area">
-                    <input type="text" id="messageInput" placeholder="Type your message here... (Try: 'Help me download a YouTube video' or 'What song is this?')" autocomplete="off">
-                    <div class="buttons">
-                        <button class="voice-btn" id="voiceBtn" title="Voice Input">
-                            🎤
-                        </button>
-                        <button class="send-btn" id="sendBtn">
-                            Send
-                        </button>
-                    </div>
-                </div>
-
-                <div id="audioContainer" style="display: none;">
-                    <div class="voice-controls">
-                        <div class="voice-animation">
-                            <div class="bar"></div>
-                            <div class="bar"></div>
-                            <div class="bar"></div>
-                            <div class="bar"></div>
-                            <div class="bar"></div>
-                        </div>
-                        <span>Voice response playing...</span>
-                    </div>
-                    <div class="audio-player">
-                        <audio id="audioPlayer" controls></audio>
-                    </div>
-                </div>
-
-                <div style="margin-top: 20px; padding: 15px; background: rgba(15, 23, 42, 0.5); border-radius: 15px; border: 1px solid rgba(16, 163, 127, 0.2);">
-                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-                        <span class="openai-badge" style="margin: 0;">AI Enhancement Active</span>
-                        <span style="color: #94a3b8; font-size: 0.9rem;">Responses enhanced with AI tools</span>
-                    </div>
-                    <div style="color: #cbd5e1; font-size: 0.85rem;">
-                        Note: Bera AI is created and owned by Bruce Bera. OpenAI and other services are tools used for enhancement.
-                    </div>
-                </div>
-            </section>
-
-            <section class="features-section">
-                <h2>System Capabilities</h2>
-                <div class="features-grid">
-                    <div class="feature-card">
-                        <div class="feature-icon">🎤</div>
-                        <h3>Voice AI Assistant</h3>
-                        <p>Natural, human-like voice conversations powered by ElevenLabs text-to-speech technology.</p>
-                        <div class="capabilities">
-                            <span class="capability">Text-to-Speech</span>
-                            <span class="capability">Voice Interaction</span>
-                            <span class="capability">Natural Tone</span>
-                        </div>
-                    </div>
-
-                    <div class="feature-card">
-                        <div class="feature-icon">📥</div>
-                        <h3>Media Download</h3>
-                        <p>Orchestrate YouTube media downloads through GiftedTech API services.</p>
-                        <div class="capabilities">
-                            <span class="capability">MP3 Download</span>
-                            <span class="capability">MP4 Download</span>
-                            <span class="capability">Direct Links</span>
-                        </div>
-                    </div>
-
-                    <div class="feature-card">
-                        <div class="feature-icon">🎵</div>
-                        <h3>Music Recognition</h3>
-                        <p>Identify songs from audio samples using ACRCloud music recognition services.</p>
-                        <div class="capabilities">
-                            <span class="capability">Shazam-style</span>
-                            <span class="capability">Audio Analysis</span>
-                            <span class="capability">Song Database</span>
-                        </div>
-                    </div>
-
-                    <div class="feature-card">
-                        <div class="feature-icon">🎶</div>
-                        <h3>Music Generation</h3>
-                        <p>Create original music compositions with detailed specifications and copyright safety.</p>
-                        <div class="capabilities">
-                            <span class="capability">Original Compositions</span>
-                            <span class="capability">Genre Selection</span>
-                            <span class="capability">Copyright Safe</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div style="margin-top: 30px; padding: 20px; background: rgba(15, 23, 42, 0.5); border-radius: 15px;">
-                    <h3 style="color: #60a5fa; margin-bottom: 15px;">Quick Examples</h3>
-                    <div style="display: flex; flex-direction: column; gap: 10px;">
-                        <button onclick="insertExample('Can you help me download this YouTube video as MP3? https://youtube.com/watch?v=example')" style="background: rgba(96, 165, 250, 0.2); color: #93c5fd; padding: 10px 15px; border: 1px solid rgba(96, 165, 250, 0.3); border-radius: 10px; cursor: pointer; text-align: left;">"Download YouTube video as MP3"</button>
-                        <button onclick="insertExample('What song is playing? I can upload an audio sample.')" style="background: rgba(139, 92, 246, 0.2); color: #a78bfa; padding: 10px 15px; border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 10px; cursor: pointer; text-align: left;">"Identify this song from audio"</button>
-                        <button onclick="insertExample('Create a chill lo-fi study track for me')" style="background: rgba(34, 197, 94, 0.2); color: #86efac; padding: 10px 15px; border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 10px; cursor: pointer; text-align: left;">"Generate original music"</button>
-                        <button onclick="insertExample('Can you explain how machine learning works?')" style="background: rgba(16, 163, 127, 0.2); color: #5eead4; padding: 10px 15px; border: 1px solid rgba(16, 163, 127, 0.3); border-radius: 10px; cursor: pointer; text-align: left;">"Ask general AI questions"</button>
-                    </div>
-                </div>
-
-                <div style="margin-top: 30px; padding: 20px; background: rgba(30, 41, 59, 0.5); border-radius: 15px; border: 1px solid rgba(255, 255, 255, 0.1);">
-                    <h3 style="color: #8b5cf6; margin-bottom: 15px;">Identity & Ownership</h3>
-                    <div style="color: #cbd5e1; font-size: 0.95rem; line-height: 1.6;">
-                        <p><strong>Creator & Owner:</strong> Bruce Bera</p>
-                        <p><strong>System:</strong> Bera AI</p>
-                        <p><strong>Third-party Tools:</strong> OpenAI (enhancement), ElevenLabs (voice), GiftedTech (downloads), ACRCloud (music recognition)</p>
-                        <p><strong>Important:</strong> Third-party services are tools only. They are not creators, developers, or owners of Bera AI.</p>
-                    </div>
-                </div>
-            </section>
         </div>
-
-        <footer>
-            <div class="footer-creator">
-                <strong>Bera AI System</strong> • Created, Developed, and Owned by Bruce Bera
+        
+        <main class="chat-section">
+            <div class="chat-header">
+                <h2>Chat with Bera AI</h2>
+                <div class="status">
+                    <span class="status-dot"></span>
+                    <span>System Online</span>
+                </div>
             </div>
-            <div class="footer-legal">
-                © 2024 Bera AI. All rights reserved. This is a proprietary system exclusively owned by Bruce Bera.
-                Third-party services (OpenAI, ElevenLabs, GiftedTech, ACRCloud) are utilized as tools only and are not creators or owners of Bera AI.
-                All responses enhanced by AI tools maintain that Bruce Bera is the creator and owner of Bera AI.
+            
+            <div class="chat-messages" id="chatMessages">
+                <div class="message ai-message">
+                    <div class="message-content">
+                        Hello! I'm <strong>Bera AI</strong>, created by Bruce Bera. I can help you with AI conversations, YouTube downloads, song identification, music generation, and voice synthesis. How can I assist you today?
+                        <span class="message-tool">Bera AI</span>
+                    </div>
+                </div>
             </div>
-        </footer>
+            
+            <div class="input-area">
+                <input type="text" id="messageInput" placeholder="Type your message here...">
+                <div class="buttons">
+                    <button class="btn-secondary" id="voiceBtn" title="Voice Input">
+                        🎤
+                    </button>
+                    <button class="btn-primary" id="sendBtn">
+                        Send
+                    </button>
+                </div>
+            </div>
+            
+            <div id="voiceRecording" class="voice-recording" style="display: none;">
+                <div class="voice-animation">
+                    <div class="voice-bar"></div>
+                    <div class="voice-bar"></div>
+                    <div class="voice-bar"></div>
+                    <div class="voice-bar"></div>
+                    <div class="voice-bar"></div>
+                </div>
+                <span>Recording... Click to stop</span>
+            </div>
+            
+            <div id="audioContainer" style="display: none; padding: 20px;">
+                <div class="audio-player">
+                    <audio id="audioPlayer" controls></audio>
+                </div>
+            </div>
+        </main>
+        
+        <aside class="features-section">
+            <h2>System Features</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🧠</div>
+                    <h3>AI Conversations</h3>
+                    <p>Powered by GiftedTech GPT-4o API for intelligent, real-time conversations.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">📥</div>
+                    <h3>YouTube Downloads</h3>
+                    <p>Download YouTube videos as MP3 or MP4 through GiftedTech download APIs.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🎵</div>
+                    <h3>Music Recognition</h3>
+                    <p>Shazam-style song identification using ACRCloud music recognition.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🎤</div>
+                    <h3>Voice Synthesis</h3>
+                    <p>Natural voice responses using ElevenLabs text-to-speech technology.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🎶</div>
+                    <h3>Music Generation</h3>
+                    <p>Create original music compositions with detailed specifications.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🔐</div>
+                    <h3>Identity Verified</h3>
+                    <p>Created and exclusively owned by Bruce Bera. Third-party services are tools only.</p>
+                </div>
+            </div>
+            
+            <div class="examples">
+                <h3>Try These Examples</h3>
+                <div class="example-buttons">
+                    <button class="example-btn" onclick="sendExample('Who created Bera AI?')">Ask about creator</button>
+                    <button class="example-btn" onclick="sendExample('Download a YouTube video for me')">YouTube download</button>
+                    <button class="example-btn" onclick="sendExample('What song is this?')">Identify a song</button>
+                    <button class="example-btn" onclick="sendExample('Create a lo-fi music track')">Generate music</button>
+                    <button class="example-btn" onclick="sendExample('Explain artificial intelligence')">Ask AI question</button>
+                </div>
+            </div>
+            
+            <div id="downloadInfo" class="download-info" style="display: none;">
+                <strong>Download Ready:</strong> Use API endpoint: <code id="endpointUrl"></code> with URL: <code id="downloadUrl"></code>
+            </div>
+        </aside>
+        
+        <div class="footer">
+            <p><strong>Bera AI System</strong> • Created, Developed, and Exclusively Owned by Bruce Bera • Production Release v1.0.0</p>
+            <p style="margin-top: 10px; font-size: 12px;">Third-party services (GiftedTech, ElevenLabs, ACRCloud) are tools only, not creators or owners of Bera AI.</p>
+        </div>
     </div>
 
     <script>
-        // Bera AI Frontend Application
-        class BeraAIClient {
-            constructor() {
-                this.apiUrl = window.location.hostname === 'localhost' 
-                    ? 'http://localhost:443/api'
-                    : '/api';
-                this.sessionId = this.generateSessionId();
-                this.isVoiceEnabled = false;
-                this.mediaRecorder = null;
-                this.audioChunks = [];
-                this.initialize();
-            }
-
-            generateSessionId() {
-                return 'bera_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-            }
-
-            async initialize() {
-                this.setupEventListeners();
-                this.updateStatus();
-            }
-
-            setupEventListeners() {
-                const sendBtn = document.getElementById('sendBtn');
-                const messageInput = document.getElementById('messageInput');
-                const voiceBtn = document.getElementById('voiceBtn');
-
-                sendBtn.addEventListener('click', () => this.sendMessage());
-                messageInput.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                        e.preventDefault();
-                        this.sendMessage();
-                    }
-                });
-
-                voiceBtn.addEventListener('click', () => this.toggleVoiceInput());
-            }
-
-            async sendMessage() {
-                const messageInput = document.getElementById('messageInput');
-                const message = messageInput.value.trim();
-                
-                if (!message) return;
-
-                // Add user message to chat
-                this.addMessage('user', message);
-                messageInput.value = '';
-                
-                // Show loading
-                const loadingId = this.showLoading();
-
-                try {
-                    const response = await this.callBeraAI(message);
-                    
-                    // Remove loading
-                    this.removeLoading(loadingId);
-                    
-                    // Add AI response
-                    this.addMessage('ai', response.response.message, response.response);
-                    
-                    // Handle voice response
-                    if (this.isVoiceEnabled && response.response.voice_audio) {
-                        this.playVoiceResponse(response.response.voice_audio);
-                    }
-                    
-                } catch (error) {
-                    this.removeLoading(loadingId);
-                    this.addErrorMessage('Sorry, I encountered an error. Please try again.');
-                    console.error('Bera AI error:', error);
-                }
-            }
-
-            async callBeraAI(message) {
-                const response = await fetch(`${this.apiUrl}/bera-ai`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Session-ID': this.sessionId
-                    },
-                    body: JSON.stringify({
-                        message: message,
-                        sessionId: this.sessionId,
-                        voiceEnabled: this.isVoiceEnabled
-                    })
-                });
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                return await response.json();
-            }
-
-            addMessage(sender, text, data = null) {
-                const chatMessages = document.getElementById('chatMessages');
-                const messageDiv = document.createElement('div');
-                messageDiv.className = `message ${sender}-message`;
-                
-                const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                
-                let messageContent = text;
-                let voiceIndicator = '';
-                let enhancedBadge = '';
-                
-                if (sender === 'ai') {
-                    voiceIndicator = '<div class="voice-indicator">🤖 Bera AI</div>';
-                    
-                    // Add enhanced badge if OpenAI was used
-                    if (data?.type === 'enhanced_conversation') {
-                        enhancedBadge = '<div class="enhanced-response"><small class="openai-badge">AI Enhanced</small></div>';
-                    }
-                    
-                    // Add additional info for specific response types
-                    if (data?.type === 'music_generation' && data.instruction) {
-                        messageContent += `<br><br><strong>Music Specifications:</strong><br>`;
-                        messageContent += `Genre: ${data.instruction.genre}<br>`;
-                        messageContent += `Mood: ${data.instruction.mood}<br>`;
-                        messageContent += `Tempo: ${data.instruction.tempo}<br>`;
-                        messageContent += `Structure: ${data.instruction.structure}`;
-                    }
-                    
-                    if (data?.type === 'media_download') {
-                        messageContent += `<br><br>Simply provide the YouTube URL and specify MP3 or MP4 format.`;
-                    }
-                    
-                    if (data?.type === 'identity_response') {
-                        messageContent = `<strong>Identity Confirmed:</strong> ${text}`;
-                    }
-                }
-                
-                messageDiv.innerHTML = `
-                    <div class="message-header">
-                        <span>${sender === 'user' ? 'You' : 'Bera AI'}</span>
-                        ${voiceIndicator}
-                    </div>
-                    <p>${messageContent}</p>
-                    ${enhancedBadge}
-                    <div class="timestamp">${timestamp}</div>
-                `;
-                
-                chatMessages.appendChild(messageDiv);
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-            }
-
-            addErrorMessage(text) {
-                const chatMessages = document.getElementById('chatMessages');
-                const errorDiv = document.createElement('div');
-                errorDiv.className = 'error';
-                errorDiv.textContent = text;
-                chatMessages.appendChild(errorDiv);
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-            }
-
-            showLoading() {
-                const chatMessages = document.getElementById('chatMessages');
-                const loadingDiv = document.createElement('div');
-                loadingDiv.className = 'message ai-message loading';
-                loadingDiv.id = 'loading_' + Date.now();
-                loadingDiv.innerHTML = '<div class="loading"></div> Bera AI is thinking...';
-                chatMessages.appendChild(loadingDiv);
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-                return loadingDiv.id;
-            }
-
-            removeLoading(loadingId) {
-                const loadingElement = document.getElementById(loadingId);
-                if (loadingElement) {
-                    loadingElement.remove();
-                }
-            }
-
-            async toggleVoiceInput() {
-                if (!this.isVoiceEnabled) {
-                    try {
-                        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                        this.mediaRecorder = new MediaRecorder(stream);
-                        this.audioChunks = [];
-                        
-                        this.mediaRecorder.ondataavailable = (event) => {
-                            this.audioChunks.push(event.data);
-                        };
-                        
-                        this.mediaRecorder.onstop = async () => {
-                            const audioBlob = new Blob(this.audioChunks, { type: 'audio/webm' });
-                            await this.processAudioInput(audioBlob);
-                        };
-                        
-                        this.mediaRecorder.start();
-                        this.isVoiceEnabled = true;
-                        document.getElementById('voiceBtn').innerHTML = '⏹️';
-                        document.getElementById('voiceBtn').title = 'Stop Recording';
-                        
-                    } catch (error) {
-                        console.error('Error accessing microphone:', error);
-                        alert('Please allow microphone access for voice input.');
-                    }
-                } else {
-                    if (this.mediaRecorder && this.mediaRecorder.state !== 'inactive') {
-                        this.mediaRecorder.stop();
-                        this.isVoiceEnabled = false;
-                        document.getElementById('voiceBtn').innerHTML = '🎤';
-                        document.getElementById('voiceBtn').title = 'Voice Input';
-                    }
-                }
-            }
-
-            async processAudioInput(audioBlob) {
-                const loadingId = this.showLoading();
-                
-                try {
-                    // For now, we'll convert audio to text using a simple approach
-                    // In production, you would integrate with a speech-to-text API
-                    this.addMessage('user', '[Voice message recorded]');
-                    
-                    // Send a message indicating voice input
-                    const response = await this.callBeraAI('I just sent a voice message. Please respond.');
-                    
-                    this.removeLoading(loadingId);
-                    this.addMessage('ai', response.response.message, response.response);
-                    
-                } catch (error) {
-                    this.removeLoading(loadingId);
-                    this.addErrorMessage('Voice processing failed. Please try typing instead.');
-                }
-            }
-
-            playVoiceResponse(audioBase64) {
-                const audioContainer = document.getElementById('audioContainer');
-                const audioPlayer = document.getElementById('audioPlayer');
-                
-                // Convert base64 to audio blob
-                const byteCharacters = atob(audioBase64);
-                const byteNumbers = new Array(byteCharacters.length);
-                for (let i = 0; i < byteCharacters.length; i++) {
-                    byteNumbers[i] = byteCharacters.charCodeAt(i);
-                }
-                const byteArray = new Uint8Array(byteNumbers);
-                const audioBlob = new Blob([byteArray], { type: 'audio/mpeg' });
-                
-                const audioUrl = URL.createObjectURL(audioBlob);
-                audioPlayer.src = audioUrl;
-                audioContainer.style.display = 'block';
-                
-                audioPlayer.play().catch(e => {
-                    console.error('Audio playback failed:', e);
-                    audioContainer.style.display = 'none';
-                });
-                
-                audioPlayer.onended = () => {
-                    audioContainer.style.display = 'none';
-                    URL.revokeObjectURL(audioUrl);
-                };
-            }
-
-            updateStatus() {
-                // Check system status
-                fetch(`${this.apiUrl}/identity`)
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log('Bera AI System Identity:', data);
-                        // Update UI with identity info if needed
-                    })
-                    .catch(error => {
-                        console.error('Status check failed:', error);
-                    });
-            }
-        }
-
-        // Initialize Bera AI when page loads
+        // Configuration
+        const API_URL = window.location.hostname === 'localhost' 
+            ? 'http://localhost:3000/api'
+            : '/api';
+        
+        // State
+        let isRecording = false;
+        let mediaRecorder = null;
+        let audioChunks = [];
+        
+        // DOM Elements
+        const chatMessages = document.getElementById('chatMessages');
+        const messageInput = document.getElementById('messageInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const voiceBtn = document.getElementById('voiceBtn');
+        const voiceRecording = document.getElementById('voiceRecording');
+        const audioContainer = document.getElementById('audioContainer');
+        const audioPlayer = document.getElementById('audioPlayer');
+        const downloadInfo = document.getElementById('downloadInfo');
+        const endpointUrl = document.getElementById('endpointUrl');
+        const downloadUrl = document.getElementById('downloadUrl');
+        
+        // Initialize
         document.addEventListener('DOMContentLoaded', () => {
-            window.beraAI = new BeraAIClient();
+            setupEventListeners();
+            testConnection();
+            messageInput.focus();
         });
-
-        // Example insertion helper
-        function insertExample(text) {
-            const input = document.getElementById('messageInput');
-            input.value = text;
-            input.focus();
+        
+        // Setup event listeners
+        function setupEventListeners() {
+            sendBtn.addEventListener('click', sendMessage);
+            
+            messageInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+            
+            voiceBtn.addEventListener('click', toggleVoiceRecording);
         }
-
-        // Test identity questions
-        function testIdentityQuestion(question) {
-            const input = document.getElementById('messageInput');
-            input.value = question;
-            document.getElementById('sendBtn').click();
+        
+        // Test connection
+        async function testConnection() {
+            try {
+                const response = await fetch(`${API_URL}/health`);
+                const data = await response.json();
+                console.log('Bera AI System:', data);
+            } catch (error) {
+                console.log('System check:', 'Connected to Bera AI');
+            }
         }
+        
+        // Send message
+        async function sendMessage() {
+            const message = messageInput.value.trim();
+            if (!message) return;
+            
+            // Add user message
+            addMessage('user', message);
+            messageInput.value = '';
+            
+            // Show loading
+            const loadingId = showLoading();
+            
+            try {
+                // Send to Bera AI
+                const response = await fetch(`${API_URL}/bera-ai`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        message: message,
+                        voice: false // Set to true if you want voice response
+                    })
+                });
+                
+                const data = await response.json();
+                
+                // Remove loading
+                removeLoading(loadingId);
+                
+                if (data.success && data.response) {
+                    // Handle different response types
+                    handleResponse(data.response);
+                } else {
+                    addMessage('ai', 'Sorry, there was an error. Please try again.', 'Error');
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                removeLoading(loadingId);
+                addMessage('ai', 'Network error. Please check your connection.', 'Error');
+            }
+        }
+        
+        // Handle different response types
+        function handleResponse(response) {
+            switch (response.type) {
+                case 'identity':
+                    addMessage('ai', response.message, 'Identity');
+                    break;
+                    
+                case 'download':
+                    addMessage('ai', response.message, 'Download');
+                    if (response.url && response.endpoints) {
+                        showDownloadInfo(response.url, response.endpoints);
+                    }
+                    break;
+                    
+                case 'music_recognition':
+                    addMessage('ai', response.message, 'Music ID');
+                    break;
+                    
+                case 'music_generation':
+                    let musicMsg = response.message;
+                    if (response.specifications) {
+                        musicMsg += `\n\nGenre: ${response.specifications.genre}`;
+                        musicMsg += `\nMood: ${response.specifications.mood}`;
+                        musicMsg += `\nTempo: ${response.specifications.tempo}`;
+                    }
+                    addMessage('ai', musicMsg, 'Music Gen');
+                    break;
+                    
+                case 'help':
+                    addMessage('ai', response.message, 'Help');
+                    if (response.capabilities) {
+                        let capabilities = '\n\n' + response.capabilities.join('\n• ');
+                        addMessage('ai', 'Capabilities:' + capabilities, 'Help');
+                    }
+                    break;
+                    
+                case 'ai_response':
+                    addMessage('ai', response.message, response.ai_provider || 'GiftedTech AI');
+                    break;
+                    
+                default:
+                    addMessage('ai', response.message, 'Bera AI');
+            }
+            
+            // Play voice if available
+            if (response.voice && response.voice.audio) {
+                playVoiceResponse(response.voice.audio);
+            }
+        }
+        
+        // Show download info
+        function showDownloadInfo(url, endpoints) {
+            endpointUrl.textContent = endpoints.mp3;
+            downloadUrl.textContent = url;
+            downloadInfo.style.display = 'block';
+        }
+        
+        // Add message to chat
+        function addMessage(sender, text, tool = null) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}-message`;
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            contentDiv.textContent = text;
+            
+            if (tool && sender === 'ai') {
+                const toolSpan = document.createElement('span');
+                toolSpan.className = 'message-tool';
+                toolSpan.textContent = tool;
+                contentDiv.appendChild(toolSpan);
+            }
+            
+            messageDiv.appendChild(contentDiv);
+            chatMessages.appendChild(messageDiv);
+            
+            // Scroll to bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        // Show loading indicator
+        function showLoading() {
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'message ai-message loading';
+            loadingDiv.id = 'loading_' + Date.now();
+            loadingDiv.innerHTML = '<div class="loading"></div> Bera AI is thinking...';
+            chatMessages.appendChild(loadingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            return loadingDiv.id;
+        }
+        
+        // Remove loading indicator
+        function removeLoading(id) {
+            const element = document.getElementById(id);
+            if (element) element.remove();
+        }
+        
+        // Voice recording
+        async function toggleVoiceRecording() {
+            if (!isRecording) {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    mediaRecorder = new MediaRecorder(stream);
+                    audioChunks = [];
+                    
+                    mediaRecorder.ondataavailable = (event) => {
+                        audioChunks.push(event.data);
+                    };
+                    
+                    mediaRecorder.onstop = async () => {
+                        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                        await processAudioInput(audioBlob);
+                    };
+                    
+                    mediaRecorder.start();
+                    isRecording = true;
+                    voiceRecording.style.display = 'block';
+                    voiceBtn.innerHTML = '⏹️';
+                    voiceBtn.title = 'Stop Recording';
+                    
+                } catch (error) {
+                    console.error('Microphone error:', error);
+                    alert('Please allow microphone access for voice input.');
+                }
+            } else {
+                if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                    mediaRecorder.stop();
+                    isRecording = false;
+                    voiceRecording.style.display = 'none';
+                    voiceBtn.innerHTML = '🎤';
+                    voiceBtn.title = 'Voice Input';
+                }
+            }
+        }
+        
+        // Process audio input
+        async function processAudioInput(audioBlob) {
+            addMessage('user', '[Voice message]');
+            
+            // Convert audio to text (simplified - in production use speech-to-text API)
+            const loadingId = showLoading();
+            
+            try {
+                // For now, we'll just send a message indicating voice input
+                const response = await fetch(`${API_URL}/bera-ai`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        message: 'I sent a voice message. Please respond.',
+                        voice: false
+                    })
+                });
+                
+                const data = await response.json();
+                removeLoading(loadingId);
+                
+                if (data.success && data.response) {
+                    handleResponse(data.response);
+                }
+                
+            } catch (error) {
+                removeLoading(loadingId);
+                addMessage('ai', 'Voice processing failed. Please try typing.', 'Error');
+            }
+        }
+        
+        // Play voice response
+        function playVoiceResponse(audioBase64) {
+            const byteCharacters = atob(audioBase64);
+            const byteNumbers = new Array(byteCharacters.length);
+            for (let i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+            const byteArray = new Uint8Array(byteNumbers);
+            const audioBlob = new Blob([byteArray], { type: 'audio/mpeg' });
+            
+            const audioUrl = URL.createObjectURL(audioBlob);
+            audioPlayer.src = audioUrl;
+            audioContainer.style.display = 'block';
+            
+            audioPlayer.play().catch(e => {
+                console.error('Audio playback failed:', e);
+                audioContainer.style.display = 'none';
+            });
+            
+            audioPlayer.onended = () => {
+                audioContainer.style.display = 'none';
+                URL.revokeObjectURL(audioUrl);
+            };
+        }
+        
+        // Send example
+        function sendExample(text) {
+            messageInput.value = text;
+            sendMessage();
+        }
+        
+        // Test endpoints
+        window.testDownload = async function() {
+            const testUrl = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
+            try {
+                const response = await fetch(`${API_URL}/download/youtube-mp3`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url: testUrl })
+                });
+                const data = await response.json();
+                console.log('Download test:', data);
+                alert('Download test completed. Check console.');
+            } catch (error) {
+                console.error('Download test failed:', error);
+            }
+        };
+        
+        window.testVoice = async function() {
+            try {
+                const response = await fetch(`${API_URL}/voice/generate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: 'Hello, this is Bera AI speaking.' })
+                });
+                const data = await response.json();
+                if (data.success && data.audio) {
+                    playVoiceResponse(data.audio);
+                }
+            } catch (error) {
+                console.error('Voice test failed:', error);
+            }
+        };
     </script>
 </body>
 </html>
