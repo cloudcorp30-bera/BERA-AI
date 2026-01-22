@@ -421,6 +421,7 @@
             background: rgba(16, 185, 129, 0.1);
             border-radius: 12px;
             border: 1px solid rgba(16, 185, 129, 0.3);
+            display: none;
         }
         
         .download-buttons {
@@ -450,6 +451,33 @@
             color: white;
         }
         
+        /* Auto Download */
+        .auto-download {
+            margin-top: 15px;
+            padding: 15px;
+            background: linear-gradient(135deg, rgba(109, 40, 217, 0.1), rgba(219, 39, 119, 0.1));
+            border-radius: 12px;
+            border: 1px solid rgba(109, 40, 217, 0.3);
+        }
+        
+        .download-link {
+            display: block;
+            margin-top: 10px;
+            padding: 12px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .download-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+        }
+        
         /* Song Result */
         .song-result {
             margin-top: 15px;
@@ -457,6 +485,7 @@
             background: rgba(245, 158, 11, 0.1);
             border-radius: 12px;
             border: 1px solid rgba(245, 158, 11, 0.3);
+            display: none;
         }
         
         /* Loading */
@@ -527,6 +556,26 @@
             font-weight: 600;
             cursor: pointer;
         }
+        
+        /* Download Status */
+        .download-status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .download-success {
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #10b981;
+        }
+        
+        .download-error {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+        }
     </style>
 </head>
 <body>
@@ -552,13 +601,13 @@
                     <div class="message-content">
                         👋 Hello! I'm <strong>Bera AI</strong>, created by Bruce Bera. I can help you:
                         <br><br>
-                        • Download songs by name<br>
+                        • Download songs by name (AUTO MP3)<br>
                         • Identify songs from audio (Shazam-style)<br>
                         • Process voice messages<br>
                         • Answer any questions<br>
                         • Download YouTube videos<br>
                         <br>
-                        How can I assist you today?
+                        <strong>Try: "Download Gleeish Place by King Von"</strong>
                         <span class="message-tool">Bera AI</span>
                     </div>
                 </div>
@@ -607,48 +656,55 @@
             <div class="features-grid">
                 <div class="feature-card" onclick="sendExample('Download Gleeish Place by King Von')">
                     <div class="feature-icon">⬇️</div>
-                    <h3>Download Song</h3>
-                    <p>Say "Download [song] by [artist]" to download music</p>
+                    <h3>Auto-Download Song</h3>
+                    <p>Say "Download [song]" → Auto MP3 download</p>
+                </div>
+                
+                <div class="feature-card" onclick="sendExample('Download Blinding Lights by The Weeknd as MP4')">
+                    <div class="feature-icon">🎬</div>
+                    <h3>Download Video</h3>
+                    <p>Add "as MP4" for video download</p>
                 </div>
                 
                 <div class="feature-card" onclick="startShazam()">
                     <div class="feature-icon">🎵</div>
                     <h3>Identify Song</h3>
-                    <p>Click voice button and play music to Shazam it</p>
+                    <p>Click voice button for Shazam</p>
                 </div>
                 
                 <div class="feature-card" onclick="sendExample('What is artificial intelligence?')">
                     <div class="feature-icon">🧠</div>
                     <h3>Ask AI</h3>
-                    <p>Ask any question to GiftedTech AI</p>
-                </div>
-                
-                <div class="feature-card" onclick="sendExample('Help me with downloads')">
-                    <div class="feature-icon">❓</div>
-                    <h3>Get Help</h3>
-                    <p>Learn what I can do for you</p>
+                    <p>Ask any question</p>
                 </div>
             </div>
             
             <div class="examples">
                 <h3>Try These Examples</h3>
                 <div class="example-buttons">
-                    <button class="example-btn" onclick="sendExample('Download Gleeish Place by King Von')">Download song by name</button>
+                    <button class="example-btn" onclick="sendExample('Download Gleeish Place by King Von')">Download song (Auto MP3)</button>
+                    <button class="example-btn" onclick="sendExample('Download Blinding Lights as MP4')">Download as video</button>
                     <button class="example-btn" onclick="sendExample('What song is this?')">Identify a song</button>
                     <button class="example-btn" onclick="sendExample('Who created you?')">Ask about creator</button>
-                    <button class="example-btn" onclick="sendExample('How to download YouTube videos?')">YouTube help</button>
                     <button class="example-btn" onclick="sendExample('Tell me about Bera AI')">Learn about me</button>
                 </div>
             </div>
             
-            <div id="downloadSection" style="display: none;">
-                <div class="download-info" id="downloadInfo">
-                    <strong>Download Options:</strong>
-                    <div class="download-buttons" id="downloadButtons"></div>
+            <!-- Download Info Section -->
+            <div class="download-info" id="downloadInfo">
+                <strong>Download Options:</strong>
+                <div class="download-buttons" id="downloadButtons"></div>
+            </div>
+            
+            <!-- Auto Download Section -->
+            <div id="autoDownloadSection" style="display: none;">
+                <div class="auto-download" id="autoDownload">
+                    <!-- Auto download content will be inserted here -->
                 </div>
             </div>
             
-            <div id="songResult" class="song-result" style="display: none;">
+            <!-- Song Result Section -->
+            <div id="songResult" class="song-result">
                 <strong id="songTitle">Song Found!</strong>
                 <div id="songDetails"></div>
             </div>
@@ -671,7 +727,6 @@
         let mediaRecorder = null;
         let audioChunks = [];
         let isShazamMode = false;
-        let currentSongData = null;
         
         // DOM Elements
         const chatMessages = document.getElementById('chatMessages');
@@ -683,9 +738,10 @@
         const audioUpload = document.getElementById('audioUpload');
         const audioContainer = document.getElementById('audioContainer');
         const audioPlayer = document.getElementById('audioPlayer');
-        const downloadSection = document.getElementById('downloadSection');
         const downloadInfo = document.getElementById('downloadInfo');
         const downloadButtons = document.getElementById('downloadButtons');
+        const autoDownloadSection = document.getElementById('autoDownloadSection');
+        const autoDownload = document.getElementById('autoDownload');
         const songResult = document.getElementById('songResult');
         const songTitle = document.getElementById('songTitle');
         const songDetails = document.getElementById('songDetails');
@@ -732,15 +788,14 @@
             messageInput.value = '';
             messageInput.focus();
             
-            const loadingId = showLoading('Bera AI is thinking...');
+            const loadingId = showLoading('Bera AI is processing...');
             
             try {
                 const response = await fetch(`${API_URL}/bera-ai`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 
-                        message: message,
-                        voice: false
+                        message: message
                     })
                 });
                 
@@ -765,55 +820,43 @@
             console.log('Response type:', response.type);
             
             switch (response.type) {
-                case 'identity':
-                    addMessage('ai', response.message, 'Identity');
+                case 'auto_download':
+                    handleAutoDownload(response);
                     break;
                     
-                case 'song_found':
-                    handleSongFound(response);
-                    break;
-                    
-                case 'song_not_found':
-                    addMessage('ai', response.message, 'Song Search');
-                    break;
-                    
-                case 'song_request_unclear':
-                    addMessage('ai', response.message, 'Clarify');
-                    if (response.examples) {
-                        showExamples(response.examples);
+                case 'download_failed':
+                    addMessage('ai', response.message, 'Download Failed');
+                    if (response.youtube_url) {
+                        showDownloadOptions(response.youtube_url, 'Both');
                     }
                     break;
                     
-                case 'video_download':
-                    addMessage('ai', response.message, 'Download');
+                case 'video_download_ready':
+                    addMessage('ai', response.message, 'Video Ready');
+                    showDownloadOptions(response.youtube_url, 'MP4');
+                    break;
+                    
+                case 'url_download_ready':
+                    addMessage('ai', response.message, 'URL Ready');
                     showDownloadOptions(response.url, response.format);
+                    break;
+                    
+                case 'song_not_found':
+                    addMessage('ai', response.message, 'Not Found');
+                    break;
+                    
+                case 'identity':
+                    addMessage('ai', response.message, 'Identity');
                     break;
                     
                 case 'music_recognition':
                     addMessage('ai', response.message, 'Shazam');
                     break;
                     
-                case 'voice_message_response':
-                    addMessage('ai', response.message, 'Voice');
-                    break;
-                    
-                case 'music_generation':
-                    let musicMsg = response.message;
-                    if (response.specifications) {
-                        musicMsg += `\n\n🎵 Specifications:\n`;
-                        musicMsg += `• Genre: ${response.specifications.genre}\n`;
-                        musicMsg += `• Mood: ${response.specifications.mood}\n`;
-                        musicMsg += `• Tempo: ${response.specifications.tempo}\n`;
-                        musicMsg += `• Structure: ${response.specifications.structure}`;
-                    }
-                    addMessage('ai', musicMsg, 'Music Gen');
-                    break;
-                    
                 case 'help':
                     addMessage('ai', response.message, 'Help');
                     if (response.capabilities) {
-                        let capabilities = '\n\n' + response.capabilities.join('\n• ');
-                        addMessage('ai', 'Capabilities:' + capabilities, 'Help');
+                        showExamples(response.capabilities);
                     }
                     break;
                     
@@ -822,32 +865,77 @@
                     break;
                     
                 default:
-                    addMessage('ai', response.message, 'Bera AI');
-            }
-            
-            // Play voice if available
-            if (response.voice && response.voice.audio) {
-                playVoiceResponse(response.voice.audio);
+                    addMessage('ai', response.message || 'Processing complete', 'Bera AI');
             }
         }
         
-        // Handle song found
-        function handleSongFound(response) {
-            currentSongData = response;
+        // Handle auto-download
+        function handleAutoDownload(response) {
+            addMessage('ai', response.message, 'Auto-Download');
             
-            let message = `🎵 Found: "${response.song}"`;
-            if (response.artist) {
-                message += ` by ${response.artist}`;
+            // Hide other sections
+            downloadInfo.style.display = 'none';
+            songResult.style.display = 'none';
+            
+            if (response.download_data) {
+                const data = response.download_data;
+                
+                // Clear previous content
+                autoDownload.innerHTML = '';
+                
+                // Create auto-download display
+                const downloadDiv = document.createElement('div');
+                
+                if (data.download_link) {
+                    // Create direct download link
+                    const downloadLink = document.createElement('a');
+                    downloadLink.className = 'download-link';
+                    downloadLink.href = data.download_link;
+                    downloadLink.download = `${data.title || response.song}.${data.format.toLowerCase()}`;
+                    downloadLink.innerHTML = `⬇️ Download ${data.format}: ${data.title || response.song}`;
+                    downloadLink.target = '_blank';
+                    
+                    // Add click handler to track download
+                    downloadLink.addEventListener('click', function(e) {
+                        addMessage('ai', `✅ Download started for "${data.title || response.song}" as ${data.format}`, 'Download');
+                        setTimeout(() => {
+                            autoDownloadSection.style.display = 'none';
+                        }, 3000);
+                    });
+                    
+                    downloadDiv.appendChild(downloadLink);
+                    
+                    // Auto-click after a short delay
+                    setTimeout(() => {
+                        downloadLink.click();
+                    }, 1000);
+                    
+                } else if (data.raw_data) {
+                    // Show raw data info
+                    const infoDiv = document.createElement('div');
+                    infoDiv.className = 'download-status download-success';
+                    infoDiv.innerHTML = `
+                        <strong>Download data received:</strong><br>
+                        Title: ${data.title || response.song}<br>
+                        Format: ${data.format}<br>
+                        <small>Check console for raw data</small>
+                    `;
+                    downloadDiv.appendChild(infoDiv);
+                    
+                    console.log('Download raw data:', data.raw_data);
+                    
+                    addMessage('ai', 'Download data received. Check the side panel for details.', 'Info');
+                }
+                
+                autoDownload.appendChild(downloadDiv);
+                autoDownloadSection.style.display = 'block';
+                
+            } else {
+                addMessage('ai', 'Download data missing. Please try again.', 'Error');
             }
-            message += `\n\nChoose download format:`;
-            
-            addMessage('ai', message, 'Song Found');
-            
-            // Show download buttons
-            showDownloadOptions(response.youtube_url, 'Both');
         }
         
-        // Show download options
+        // Show download options (for manual selection)
         function showDownloadOptions(url, format) {
             downloadButtons.innerHTML = '';
             
@@ -867,10 +955,13 @@
                 downloadButtons.appendChild(mp4Btn);
             }
             
-            downloadSection.style.display = 'block';
+            // Show download info section
+            downloadInfo.style.display = 'block';
+            autoDownloadSection.style.display = 'none';
+            songResult.style.display = 'none';
         }
         
-        // Process download
+        // Process download (for manual downloads)
         async function processDownload(url, format) {
             const loadingId = showLoading(`Downloading ${format}...`);
             
@@ -889,40 +980,51 @@
                 if (result.success && result.download_link) {
                     // Create download link
                     const downloadLink = document.createElement('a');
+                    downloadLink.className = 'download-link';
                     downloadLink.href = result.download_link;
                     downloadLink.download = `${result.title || 'download'}.${format.toLowerCase()}`;
                     downloadLink.innerHTML = `✅ Download ${format}: ${result.title}`;
-                    downloadLink.style.display = 'block';
-                    downloadLink.style.marginTop = '10px';
-                    downloadLink.style.padding = '10px';
-                    downloadLink.style.background = 'rgba(16, 185, 129, 0.2)';
-                    downloadLink.style.borderRadius = '8px';
-                    downloadLink.style.color = '#10b981';
-                    downloadLink.style.textDecoration = 'none';
-                    downloadLink.style.border = '1px solid #10b981';
+                    downloadLink.target = '_blank';
                     
-                    // Add to chat
-                    const messageDiv = document.createElement('div');
-                    messageDiv.className = 'message ai-message';
-                    const contentDiv = document.createElement('div');
-                    contentDiv.className = 'message-content';
-                    contentDiv.innerHTML = `<strong>Download Ready!</strong><br>`;
-                    contentDiv.appendChild(downloadLink);
-                    messageDiv.appendChild(contentDiv);
-                    chatMessages.appendChild(messageDiv);
+                    // Add to auto-download section
+                    autoDownload.innerHTML = '';
+                    autoDownload.appendChild(downloadLink);
+                    autoDownloadSection.style.display = 'block';
+                    downloadInfo.style.display = 'none';
                     
-                    // Auto-click after a moment
+                    // Add message to chat
+                    addMessage('ai', `Download ready for ${format}. Click the download link in the side panel.`, 'Download');
+                    
+                    // Auto-click after a short delay
                     setTimeout(() => {
                         downloadLink.click();
-                        addMessage('ai', `Download started for ${format}`, 'Download');
                     }, 500);
                     
                 } else {
+                    const errorDiv = document.createElement('div');
+                    errorDiv.className = 'download-status download-error';
+                    errorDiv.innerHTML = `Download failed: ${result.error || 'Unknown error'}`;
+                    
+                    autoDownload.innerHTML = '';
+                    autoDownload.appendChild(errorDiv);
+                    autoDownloadSection.style.display = 'block';
+                    downloadInfo.style.display = 'none';
+                    
                     addMessage('ai', `Download failed: ${result.error || 'Unknown error'}`, 'Error');
                 }
                 
             } catch (error) {
                 removeLoading(loadingId);
+                
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'download-status download-error';
+                errorDiv.innerHTML = 'Download processing failed. Please try again.';
+                
+                autoDownload.innerHTML = '';
+                autoDownload.appendChild(errorDiv);
+                autoDownloadSection.style.display = 'block';
+                downloadInfo.style.display = 'none';
+                
                 addMessage('ai', 'Download processing failed. Please try again.', 'Error');
             }
         }
@@ -1058,31 +1160,10 @@
             const loadingId = showLoading('Processing voice message...');
             
             try {
-                // Convert audio to base64
-                const reader = new FileReader();
-                reader.readAsDataURL(audioBlob);
-                
-                reader.onloadend = async () => {
-                    const base64Audio = reader.result.split(',')[1];
-                    
-                    const response = await fetch(`${API_URL}/bera-ai`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ 
-                            audio_data: base64Audio,
-                            audio_type: 'audio/webm'
-                        })
-                    });
-                    
-                    const data = await response.json();
-                    removeLoading(loadingId);
-                    
-                    if (data.success && data.response) {
-                        handleResponse(data.response);
-                    } else {
-                        addMessage('ai', 'Voice message processed. How can I help?', 'Voice');
-                    }
-                };
+                // For voice messages, just add a message to chat
+                removeLoading(loadingId);
+                addMessage('user', '[Voice message]');
+                addMessage('ai', 'I received your voice message! How can I help you?', 'Voice');
                 
             } catch (error) {
                 removeLoading(loadingId);
@@ -1115,7 +1196,7 @@
                     addMessage('ai', `🎵 Song Identified: "${song.title}" by ${song.artist}`, 'Shazam');
                     
                     // Show download options
-                    showDownloadOptions(null, 'Both', `${song.title} ${song.artist}`);
+                    showDownloadOptions(null, 'Both');
                     
                 } else {
                     addMessage('ai', `Song not recognized: ${result.error || 'Try a different audio file'}`, 'Shazam');
@@ -1139,7 +1220,7 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 
-                        message: `Download ${query} as ${format}`
+                        message: `Download ${query} ${format === 'MP4' ? 'as MP4' : ''}`
                     })
                 });
                 
@@ -1198,31 +1279,6 @@
             if (element) element.remove();
         }
         
-        // Play voice response
-        function playVoiceResponse(audioBase64) {
-            const byteCharacters = atob(audioBase64);
-            const byteNumbers = new Array(byteCharacters.length);
-            for (let i = 0; i < byteCharacters.length; i++) {
-                byteNumbers[i] = byteCharacters.charCodeAt(i);
-            }
-            const byteArray = new Uint8Array(byteNumbers);
-            const audioBlob = new Blob([byteArray], { type: 'audio/mpeg' });
-            
-            const audioUrl = URL.createObjectURL(audioBlob);
-            audioPlayer.src = audioUrl;
-            audioContainer.style.display = 'block';
-            
-            audioPlayer.play().catch(e => {
-                console.error('Audio playback failed:', e);
-                audioContainer.style.display = 'none';
-            });
-            
-            audioPlayer.onended = () => {
-                audioContainer.style.display = 'none';
-                URL.revokeObjectURL(audioUrl);
-            };
-        }
-        
         // Show examples
         function showExamples(examples) {
             const examplesDiv = document.createElement('div');
@@ -1259,7 +1315,7 @@
         
         // Auto-test on load
         setTimeout(() => {
-            console.log('Bera AI Frontend Loaded');
+            console.log('Bera AI Frontend Loaded - Auto-Download Ready');
         }, 1000);
     </script>
 </body>
